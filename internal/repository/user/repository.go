@@ -14,7 +14,7 @@ import (
 var _ def.UserRepository = (*repo)(nil)
 
 const (
-	tableName = "note"
+	tableName = "auth"
 
 	idColumn              = "id"
 	nameColumn            = "name"
