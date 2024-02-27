@@ -13,7 +13,7 @@ func (i Implementation) Delete(ctx context.Context, req *desc.DeleteRequest) (*e
 		return nil, err
 	}
 
-	log.Printf("deleted user with id: %s", req.GetId())
+	log.Printf("deleted user with id: %d", req.GetId())
 
 	return &empty.Empty{}, nil
 }

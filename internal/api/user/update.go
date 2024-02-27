@@ -14,7 +14,7 @@ func (i Implementation) Update(ctx context.Context, req *desc.UpdateRequest) (*e
 		return nil, err
 	}
 
-	log.Printf("updated user with id: %s", id)
+	log.Printf("updated user with id: %d", id)
 
 	return &empty.Empty{}, nil
 }

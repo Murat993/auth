@@ -56,7 +56,7 @@ func (m *User) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Uuid
+	// no validation rules for Id
 
 	if l := utf8.RuneCountInString(m.GetName()); l < 1 || l > 50 {
 		err := UserValidationError{

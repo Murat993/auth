@@ -23,7 +23,7 @@ func ToDescUserFromDto(userDto *dto.User) *desc.User {
 	}
 
 	return &desc.User{
-		Uuid:      userDto.ID,
+		Id:        userDto.ID,
 		Name:      userDto.Name,
 		Email:     userDto.Email,
 		Role:      userDto.Role,
@@ -32,7 +32,7 @@ func ToDescUserFromDto(userDto *dto.User) *desc.User {
 	}
 }
 
-func ToUserFromDescUpdate(ID string, userUpdate *desc.UserUpdate) *dto.UserUpdate {
+func ToUserFromDescUpdate(ID int64, userUpdate *desc.UserUpdate) *dto.UserUpdate {
 	return &dto.UserUpdate{
 		ID:    ID,
 		Name:  userUpdate.GetName(),

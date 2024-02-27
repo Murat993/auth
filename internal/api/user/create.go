@@ -13,7 +13,7 @@ func (i Implementation) Create(ctx context.Context, req *desc.CreateRequest) (*d
 		return nil, err
 	}
 
-	log.Printf("inserted user with id: %s", id)
+	log.Printf("inserted user with id: %d", id)
 
 	return &desc.CreateResponse{
 		Id: id,

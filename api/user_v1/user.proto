@@ -63,7 +63,7 @@ enum Role {
 }
 
 message User {
-  string uuid = 1;
+  int64 id = 1;
   string name = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
   string email = 3;
   Role role = 4;
@@ -89,11 +89,11 @@ message CreateRequest {
 }
 
 message CreateResponse {
-  string id = 1;
+  int64 id = 1;
 }
 
 message GetRequest {
-  string id = 1;
+  int64 id = 1;
 }
 
 message GetResponse {
@@ -101,11 +101,11 @@ message GetResponse {
 }
 
 message UpdateRequest {
-  string id = 1;
+  int64 id = 1;
   UserUpdate userUpdate = 2;
 }
 
 message DeleteRequest {
-  string id = 1;
+  int64 id = 1;
 }
 

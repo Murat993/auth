@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Note API",
+    "title": "User API",
     "version": "1.0.0",
     "contact": {
       "name": "Murat N",
@@ -48,7 +48,8 @@
             "name": "id",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "string",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -78,7 +79,8 @@
             "name": "id",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "string",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -193,7 +195,8 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "format": "int64"
         }
       }
     },
@@ -217,7 +220,8 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "format": "int64"
         },
         "userUpdate": {
           "$ref": "#/definitions/user_v1UserUpdate"
@@ -227,8 +231,9 @@
     "user_v1User": {
       "type": "object",
       "properties": {
-        "uuid": {
-          "type": "string"
+        "id": {
+          "type": "string",
+          "format": "int64"
         },
         "name": {
           "type": "string"

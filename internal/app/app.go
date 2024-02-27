@@ -5,7 +5,9 @@ import (
 	"github.com/Murat993/auth/internal/closer"
 	"github.com/Murat993/auth/internal/config"
 	"github.com/Murat993/auth/internal/interceptor"
-	desc "github.com/Murat993/auth/pkg/user_v1"
+	descAccess "github.com/Murat993/auth/pkg/access_v1"
+	descAuth "github.com/Murat993/auth/pkg/auth_v1"
+	descUser "github.com/Murat993/auth/pkg/user_v1"
 	_ "github.com/Murat993/auth/statik"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rakyll/statik/fs"
@@ -120,7 +122,9 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 
 	reflection.Register(a.grpcServer)
 
-	desc.RegisterUserV1Server(a.grpcServer, a.serviceProvider.UserImpl(ctx))
+	descUser.RegisterUserV1Server(a.grpcServer, a.serviceProvider.UserImpl(ctx))
+	descAuth.RegisterAuthV1Server(a.grpcServer, a.serviceProvider.AuthImpl(ctx))
+	descAccess.RegisterAccessV1Server(a.grpcServer, a.serviceProvider.AccessImpl(ctx))
 
 	return nil
 }
@@ -132,7 +136,7 @@ func (a *App) initHTTPServer(ctx context.Context) error {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 
-	err := desc.RegisterUserV1HandlerFromEndpoint(ctx, mux, a.serviceProvider.GRPCConfig().Address(), opts)
+	err := descUser.RegisterUserV1HandlerFromEndpoint(ctx, mux, a.serviceProvider.GRPCConfig().Address(), opts)
 	if err != nil {
 		return err
 	}

@@ -16,7 +16,7 @@ type UserCreate struct {
 }
 
 type User struct {
-	ID        string
+	ID        int64
 	Name      string
 	Email     string
 	Password  string
@@ -26,7 +26,12 @@ type User struct {
 }
 
 type UserUpdate struct {
-	ID    string
+	ID    int64
 	Name  *wrappers.StringValue
 	Email *wrappers.StringValue
+}
+
+type UserLogin struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }

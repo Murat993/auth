@@ -4,6 +4,7 @@ import (
 	"github.com/Murat993/auth/internal/config"
 	"net"
 	"os"
+	"time"
 
 	"github.com/pkg/errors"
 )
@@ -11,6 +12,14 @@ import (
 const (
 	httpHostEnvName = "HTTP_HOST"
 	httpPortEnvName = "HTTP_PORT"
+
+	AuthPrefix = "Bearer "
+
+	RefreshTokenSecretKey = "REFRESH_TOKEN_SECRET_KEY"
+	AccessTokenSecretKey  = "ACCESS_TOKEN_SECRET_KEY"
+
+	RefreshTokenExpiration = 60 * time.Minute
+	AccessTokenExpiration  = 5 * time.Minute
 )
 
 type httpConfig struct {

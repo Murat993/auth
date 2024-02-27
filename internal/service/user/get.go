@@ -5,7 +5,7 @@ import (
 	"github.com/Murat993/auth/internal/dto"
 )
 
-func (s serv) Get(ctx context.Context, id string) (*dto.User, error) {
+func (s serv) Get(ctx context.Context, id int64) (*dto.User, error) {
 	user, err := s.userRepository.Get(ctx, id)
 	if err != nil {
 		return nil, err

@@ -5,8 +5,8 @@ import (
 	"github.com/Murat993/auth/internal/dto"
 )
 
-func (s serv) Create(ctx context.Context, userCreate *dto.UserCreate) (string, error) {
-	var id string
+func (s serv) Create(ctx context.Context, userCreate *dto.UserCreate) (int64, error) {
+	var id int64
 	err := s.txManager.ReadCommitted(ctx, func(ctx context.Context) error {
 		var errTx error
 		id, errTx = s.userRepository.Create(ctx, userCreate)
@@ -23,7 +23,7 @@ func (s serv) Create(ctx context.Context, userCreate *dto.UserCreate) (string, e
 	})
 
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 
 	return id, nil

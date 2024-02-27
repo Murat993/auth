@@ -12,8 +12,7 @@ func (i Implementation) Get(ctx context.Context, req *desc.GetRequest) (*desc.Ge
 	if err != nil {
 		return nil, err
 	}
-
-	log.Printf("id: %s, role: %s, name: %s, email: %s, created_at: %v, updated_at: %v\n", userObj.ID, userObj.Role, userObj.Name, userObj.Role, userObj.CreatedAt, userObj.UpdatedAt)
+	log.Printf("id: %d, role: %s, name: %s, email: %s, created_at: %v, updated_at: %v\n", userObj.ID, userObj.Role, userObj.Name, userObj.Role, userObj.CreatedAt, userObj.UpdatedAt)
 
 	return &desc.GetResponse{
 		User: converter.ToDescUserFromDto(userObj),
