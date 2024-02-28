@@ -5,10 +5,12 @@ import (
 	"github.com/Murat993/auth/internal/closer"
 	"github.com/Murat993/auth/internal/config"
 	"github.com/Murat993/auth/internal/interceptor"
+	"github.com/Murat993/auth/internal/logger"
 	descAccess "github.com/Murat993/auth/pkg/access_v1"
 	descAuth "github.com/Murat993/auth/pkg/auth_v1"
 	descUser "github.com/Murat993/auth/pkg/user_v1"
 	_ "github.com/Murat993/auth/statik"
+	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rakyll/statik/fs"
 	"github.com/rs/cors"
@@ -115,9 +117,16 @@ func (a *App) initServiceProvider(_ context.Context) error {
 }
 
 func (a *App) initGRPCServer(ctx context.Context) error {
+	logger.Init(logger.GetCore(logger.GetAtomicLevel()))
+
 	a.grpcServer = grpc.NewServer(
 		grpc.Creds(insecure.NewCredentials()),
-		grpc.UnaryInterceptor(interceptor.ValidateInterceptor),
+		grpc.UnaryInterceptor(
+			grpcMiddleware.ChainUnaryServer(
+				interceptor.LogInterceptor,
+				interceptor.ValidateInterceptor,
+			),
+		),
 	)
 
 	reflection.Register(a.grpcServer)
