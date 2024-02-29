@@ -112,3 +112,15 @@ vendor-proto:
 			mv vendor.protogen/openapiv2/protoc-gen-openapiv2/options/*.proto vendor.protogen/protoc-gen-openapiv2/options &&\
 			rm -rf vendor.protogen/openapiv2 ;\
 		fi
+
+# Является инструментом для проведения нагрузочного тестирования gRPC.
+# Надо его скачать. https://github.com/bojand/ghz/tags
+grpc-load-test:
+	ghz \
+		--proto api/auth_v1/auth.proto \
+		--call auth_v1.AuthV1.Login \
+		--data '{"username": "log", "password": "pas"}' \
+		--rps 100 \
+		--total 3000 \
+		--insecure \
+		localhost:50051

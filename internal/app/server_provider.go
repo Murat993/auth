@@ -11,6 +11,7 @@ import (
 	"github.com/Murat993/auth/internal/closer"
 	"github.com/Murat993/auth/internal/config"
 	"github.com/Murat993/auth/internal/config/env"
+	"github.com/Murat993/auth/internal/metric"
 	"github.com/Murat993/auth/internal/repository"
 	accessRepository "github.com/Murat993/auth/internal/repository/access"
 	userRepository "github.com/Murat993/auth/internal/repository/user"
@@ -39,6 +40,8 @@ type serviceProvider struct {
 	userImpl   *user.Implementation
 	authImpl   *auth.Implementation
 	accessImpl *access.Implementation
+
+	metrics *metric.Metrics
 }
 
 func newServiceProvider() *serviceProvider {
@@ -196,4 +199,12 @@ func (s *serviceProvider) AccessImpl(ctx context.Context) *access.Implementation
 	}
 
 	return s.accessImpl
+}
+
+func (s *serviceProvider) MetricsInterceptor(ctx context.Context) *metric.Metrics {
+	if s.metrics == nil {
+		s.metrics = metric.NewMetrics(ctx)
+	}
+
+	return s.metrics
 }
