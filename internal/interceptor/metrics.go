@@ -2,12 +2,12 @@ package interceptor
 
 import (
 	"context"
-	"github.com/Murat993/auth/internal/metric"
+	"github.com/Murat993/auth/internal/config"
 	"google.golang.org/grpc"
 	"time"
 )
 
-func MetricsInterceptor(metric *metric.Metrics) grpc.UnaryServerInterceptor {
+func MetricsInterceptor(metric config.MetricsConfig) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		metric.IncRequestCounter()
 

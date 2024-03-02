@@ -129,6 +129,8 @@ func (a *App) initServiceProvider(_ context.Context) error {
 func (a *App) initGRPCServer(ctx context.Context) error {
 	logger.Init(logger.GetCore(logger.GetAtomicLevel()))
 
+	a.serviceProvider.TracingConfig(ctx, logger.Logger())
+
 	a.grpcServer = grpc.NewServer(
 		grpc.Creds(insecure.NewCredentials()),
 		grpc.UnaryInterceptor(
@@ -136,6 +138,7 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 				interceptor.LogInterceptor,
 				interceptor.ValidateInterceptor,
 				interceptor.MetricsInterceptor(a.serviceProvider.MetricsInterceptor(ctx)),
+				interceptor.ServerTracingInterceptor,
 			),
 		),
 	)

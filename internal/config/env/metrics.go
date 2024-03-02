@@ -1,8 +1,8 @@
-package metric
+package env
 
 import (
 	"context"
-
+	"github.com/Murat993/auth/internal/config"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
@@ -12,14 +12,14 @@ const (
 	appName   = "my_app"
 )
 
-type Metrics struct {
+type metricsConfig struct {
 	requestCounter        prometheus.Counter
 	responseCounter       *prometheus.CounterVec
 	histogramResponseTime *prometheus.HistogramVec
 }
 
-func NewMetrics(_ context.Context) *Metrics {
-	return &Metrics{
+func NewMetrics(_ context.Context) config.MetricsConfig {
+	return &metricsConfig{
 		requestCounter: promauto.NewCounter(
 			prometheus.CounterOpts{
 				Namespace: namespace,
@@ -50,14 +50,14 @@ func NewMetrics(_ context.Context) *Metrics {
 	}
 }
 
-func (m *Metrics) IncRequestCounter() {
+func (m *metricsConfig) IncRequestCounter() {
 	m.requestCounter.Inc()
 }
 
-func (m *Metrics) IncResponseCounter(status string, method string) {
+func (m *metricsConfig) IncResponseCounter(status string, method string) {
 	m.responseCounter.WithLabelValues(status, method).Inc()
 }
 
-func (m *Metrics) HistogramResponseTimeObserve(status string, time float64) {
+func (m *metricsConfig) HistogramResponseTimeObserve(status string, time float64) {
 	m.histogramResponseTime.WithLabelValues(status).Observe(time)
 }

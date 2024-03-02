@@ -11,7 +11,6 @@ import (
 	"github.com/Murat993/auth/internal/closer"
 	"github.com/Murat993/auth/internal/config"
 	"github.com/Murat993/auth/internal/config/env"
-	"github.com/Murat993/auth/internal/metric"
 	"github.com/Murat993/auth/internal/repository"
 	accessRepository "github.com/Murat993/auth/internal/repository/access"
 	userRepository "github.com/Murat993/auth/internal/repository/user"
@@ -19,6 +18,8 @@ import (
 	accessService "github.com/Murat993/auth/internal/service/access"
 	authService "github.com/Murat993/auth/internal/service/auth"
 	userService "github.com/Murat993/auth/internal/service/user"
+	traceConfig "github.com/uber/jaeger-client-go/config"
+	"go.uber.org/zap"
 	"log"
 )
 
@@ -27,6 +28,7 @@ type serviceProvider struct {
 	grpcConfig    config.GRPCConfig
 	httpConfig    config.HTTPConfig
 	swaggerConfig config.SwaggerConfig
+	metrics       config.MetricsConfig
 
 	txManager        db.TxManager
 	dbClient         db.Client
@@ -37,11 +39,10 @@ type serviceProvider struct {
 	authService   service.AuthService
 	accessService service.AccessService
 
-	userImpl   *user.Implementation
-	authImpl   *auth.Implementation
-	accessImpl *access.Implementation
-
-	metrics *metric.Metrics
+	userImpl    *user.Implementation
+	authImpl    *auth.Implementation
+	accessImpl  *access.Implementation
+	traceConfig *traceConfig.Configuration
 }
 
 func newServiceProvider() *serviceProvider {
@@ -201,10 +202,23 @@ func (s *serviceProvider) AccessImpl(ctx context.Context) *access.Implementation
 	return s.accessImpl
 }
 
-func (s *serviceProvider) MetricsInterceptor(ctx context.Context) *metric.Metrics {
+func (s *serviceProvider) MetricsInterceptor(ctx context.Context) config.MetricsConfig {
 	if s.metrics == nil {
-		s.metrics = metric.NewMetrics(ctx)
+		s.metrics = env.NewMetrics(ctx)
 	}
 
 	return s.metrics
+}
+
+func (s *serviceProvider) TracingConfig(ctx context.Context, logger *zap.Logger) *traceConfig.Configuration {
+	if s.traceConfig == nil {
+		cfg, err := env.NewTraceConfig(ctx)
+		if err != nil {
+			logger.Fatal("failed to init tracing: %s", zap.Error(err))
+		}
+
+		s.traceConfig = cfg
+	}
+
+	return s.traceConfig
 }

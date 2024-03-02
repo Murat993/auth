@@ -28,3 +28,9 @@ type HTTPConfig interface {
 type SwaggerConfig interface {
 	Address() string
 }
+
+type MetricsConfig interface {
+	IncRequestCounter()
+	IncResponseCounter(status string, method string)
+	HistogramResponseTimeObserve(status string, time float64)
+}
