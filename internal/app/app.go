@@ -6,6 +6,7 @@ import (
 	"github.com/Murat993/auth/internal/config"
 	"github.com/Murat993/auth/internal/interceptor"
 	"github.com/Murat993/auth/internal/logger"
+	"github.com/Murat993/auth/internal/rate_limiter"
 	descAccess "github.com/Murat993/auth/pkg/access_v1"
 	descAuth "github.com/Murat993/auth/pkg/auth_v1"
 	descUser "github.com/Murat993/auth/pkg/user_v1"
@@ -23,6 +24,7 @@ import (
 	"net"
 	"net/http"
 	"sync"
+	"time"
 )
 
 type App struct {
@@ -130,6 +132,7 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 	logger.Init(logger.GetCore(logger.GetAtomicLevel()))
 
 	a.serviceProvider.TracingConfig(ctx, logger.Logger())
+	rateLimiter := rate_limiter.NewTokenBucketLimiter(ctx, 10, time.Second)
 
 	a.grpcServer = grpc.NewServer(
 		grpc.Creds(insecure.NewCredentials()),
@@ -139,6 +142,7 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 				interceptor.ValidateInterceptor,
 				interceptor.MetricsInterceptor(a.serviceProvider.MetricsInterceptor(ctx)),
 				interceptor.ServerTracingInterceptor,
+				interceptor.NewRateLimiterInterceptor(rateLimiter).Unary,
 			),
 		),
 	)
