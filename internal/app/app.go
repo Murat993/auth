@@ -133,6 +133,7 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 
 	a.serviceProvider.TracingConfig(ctx, logger.Logger())
 	rateLimiter := rate_limiter.NewTokenBucketLimiter(ctx, 10, time.Second)
+	circuitBreaker := a.serviceProvider.CircuitBreakerConfig(ctx)
 
 	a.grpcServer = grpc.NewServer(
 		grpc.Creds(insecure.NewCredentials()),
@@ -140,9 +141,10 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 			grpcMiddleware.ChainUnaryServer(
 				interceptor.LogInterceptor,
 				interceptor.ValidateInterceptor,
-				interceptor.MetricsInterceptor(a.serviceProvider.MetricsInterceptor(ctx)),
 				interceptor.ServerTracingInterceptor,
 				interceptor.NewRateLimiterInterceptor(rateLimiter).Unary,
+				interceptor.MetricsInterceptor(a.serviceProvider.MetricsInterceptor(ctx)),
+				interceptor.NewCircuitBreakerInterceptor(circuitBreaker).Unary,
 			),
 		),
 	)

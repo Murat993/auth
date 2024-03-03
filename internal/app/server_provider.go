@@ -18,6 +18,7 @@ import (
 	accessService "github.com/Murat993/auth/internal/service/access"
 	authService "github.com/Murat993/auth/internal/service/auth"
 	userService "github.com/Murat993/auth/internal/service/user"
+	"github.com/sony/gobreaker"
 	traceConfig "github.com/uber/jaeger-client-go/config"
 	"go.uber.org/zap"
 	"log"
@@ -39,10 +40,11 @@ type serviceProvider struct {
 	authService   service.AuthService
 	accessService service.AccessService
 
-	userImpl    *user.Implementation
-	authImpl    *auth.Implementation
-	accessImpl  *access.Implementation
-	traceConfig *traceConfig.Configuration
+	userImpl       *user.Implementation
+	authImpl       *auth.Implementation
+	accessImpl     *access.Implementation
+	traceConfig    *traceConfig.Configuration
+	circuitBreaker *gobreaker.CircuitBreaker
 }
 
 func newServiceProvider() *serviceProvider {
@@ -221,4 +223,12 @@ func (s *serviceProvider) TracingConfig(ctx context.Context, logger *zap.Logger)
 	}
 
 	return s.traceConfig
+}
+
+func (s *serviceProvider) CircuitBreakerConfig(ctx context.Context) *gobreaker.CircuitBreaker {
+	if s.circuitBreaker == nil {
+		s.circuitBreaker = env.NewCircuitBreakerConfig(ctx)
+	}
+
+	return s.circuitBreaker
 }
