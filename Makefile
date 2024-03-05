@@ -124,3 +124,13 @@ grpc-load-test:
 		--total 3000 \
 		--insecure \
 		localhost:50051
+
+# Безопасность на транспортном уровне
+gen-cert:
+	openssl genrsa -out certificates/ca.key 4096 # генерирует ключ
+	openssl req -new -x509 -key certificates/ca.key -sha256 -subj "/C=US/ST=NJ/O=CA, Inc." -days 365 -out certificates/ca.cert # генерирует сертификат и время жизни
+	openssl genrsa -out certificates/service.key 4096 # генерирует ключ для самого сервиса
+	openssl req -new -key certificates/service.key -out certificates/service.csr -config certificate.conf # генерирует сертификат и подписываем параметрами в файле certificate.conf
+	openssl x509 -req -in certificates/service.csr -CA certificates/ca.cert -CAkey certificates/ca.key -CAcreateserial \
+    		-out certificates/service.pem -days 365 -sha256 -extfile certificate.conf -extensions req_ext # Генерируем service.pem ключ, который будет содержать
+    																						 # все необходимые данные о корректности сервера
